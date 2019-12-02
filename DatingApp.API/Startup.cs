@@ -24,15 +24,16 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method gets called by the runtime. Use this method to add services to the container. Order doesn't matter
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>( x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddCors();
+            services.AddScoped<IAuthRepository, AuthRepository>(); //Specify interface(contract) first then the repository ()
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. Order DOES matter
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
