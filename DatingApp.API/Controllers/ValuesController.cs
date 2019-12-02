@@ -9,18 +9,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Controllers
 {
-    // http:{{host}}:5000/api/Values
+    
     [Authorize] 
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // http:{{host}}:5000/api/Values
     [ApiController] //Forces Attribute routing (rather than conventional)
     public class ValuesController : ControllerBase 
     {
+
+
+
         private readonly DataContext _context;
         public ValuesController(DataContext context)
         {
             this._context = context;
-
         }
+
+
+
+
+
+
         // GET api/values
         [HttpGet]
         public async Task<IActionResult> GetValues()
