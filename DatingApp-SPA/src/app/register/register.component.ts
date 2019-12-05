@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class RegisterComponent implements OnInit {
   @Input () valuesFromHome: any;
-
+  @Output() cancelRegister = new EventEmitter(); // All outputs emit an event which, during bubbling will get caught by the parent
   model: any = {};
 
   constructor() { }
@@ -20,7 +20,8 @@ export class RegisterComponent implements OnInit {
   }
 
   cancel() {
-    console.log('Canceled')
+    this.cancelRegister.emit(false); // Anything can be emitted, but simple false in this case.
+    console.log('Canceled');
   }
 
 }
