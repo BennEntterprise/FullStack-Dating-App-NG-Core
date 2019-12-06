@@ -49,46 +49,42 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            try
+
+    
+
+            //Make sure we have a user
+            var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
+            if (userFromRepo == null)
+                return Unauthorized(); //Non-discriminat rejections. 
+
+            // Set up claims array.
+            var claims = new[]
             {
-                throw new Exception("Computer says no!");
-
-                //Make sure we have a user
-                var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
-                if (userFromRepo == null)
-                    return Unauthorized(); //Non-discriminat rejections. 
-
-                // Set up claims array.
-                var claims = new[]
-                {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()), //Claim(TypeOfClaimImAsserting, ValueOfAssertion)
                 new Claim(ClaimTypes.Name, userFromRepo.Username)  // **Checkout other "ClaimTypes"! It's basically ~free~ validation code!
             };
 
-                // Server side signing of a token that will be given to the client
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddDays(1),
-                    SigningCredentials = creds
-                };
-
-                //Make the JWT based on the descriptor. 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                // Write the token into the response!
-                return Ok(new
-                {
-                    token = tokenHandler.WriteToken(token)
-                });
-            }
-            catch
+            // Server side signing of a token that will be given to the client
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                return StatusCode(500, "Computer Really Says No");
-            }
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            //Make the JWT based on the descriptor. 
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            // Write the token into the response!
+            return Ok(new
+            {
+                token = tokenHandler.WriteToken(token)
+            });
+
+
         }
     }
 }
