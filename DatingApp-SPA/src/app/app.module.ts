@@ -1,10 +1,11 @@
 // Node_Module Pkgs
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {HttpClientModule } from '@angular/common/http';
-import {FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
 
 // Local Components
 import { AppComponent } from './app.component';
@@ -20,6 +21,9 @@ import { MessagesComponent } from './messages/messages.component';
 import { appRoutes } from './routes';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 
+export function tokenGetter() {
+   return localStorage.getItem('token');
+}
 @NgModule({
    declarations: [
       AppComponent,
@@ -36,7 +40,14 @@ import { MemberCardComponent } from './members/member-card/member-card.component
       HttpClientModule,
       FormsModule,
       BsDropdownModule.forRoot(),
-      RouterModule.forRoot(appRoutes)
+      RouterModule.forRoot(appRoutes),
+      JwtModule.forRoot({
+         config: {
+            tokenGetter,
+            whitelistedDomains: ['localhost:5000'],
+            blacklistedRoutes: ['localhost:5000/auth']
+         }
+      })
    ],
    providers: [
       AuthService,
