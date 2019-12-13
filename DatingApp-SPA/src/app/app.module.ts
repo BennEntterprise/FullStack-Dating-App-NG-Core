@@ -24,16 +24,18 @@ import { MemberCardComponent } from './members/member-card/member-card.component
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 
 export function tokenGetter() {
    return localStorage.getItem('token');
 }
 
-// Handles known issue: https://github.com/lukasz-galka/ngx-gallery/issues/242 
-export class CustomHammerConfig extends HammerGestureConfig  { 
+// Handles known issue: https://github.com/lukasz-galka/ngx-gallery/issues/242
+export class CustomHammerConfig extends HammerGestureConfig {
    overrides = {
-       pinch: { enable: false },
-       rotate: { enable: false }
+      pinch: { enable: false },
+      rotate: { enable: false }
    };
 }
 @NgModule({
@@ -46,7 +48,8 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       ListsComponent,
       MessagesComponent,
       MemberCardComponent,
-      MemberDetailComponent
+      MemberDetailComponent,
+      MemberEditComponent
    ],
    imports: [
       BrowserModule,
@@ -70,7 +73,8 @@ export class CustomHammerConfig extends HammerGestureConfig  {
       AlertifyService,
       MemberDetailResolver,
       MemberListResolver,
-      { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig } // Handles known Issue:  https://github.com/lukasz-galka/ngx-gallery/issues/242 
+      MemberEditResolver,
+      { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig } // Handles known Issue:  https://github.com/lukasz-galka/ngx-gallery/issues/242
    ],
    bootstrap: [
       AppComponent
