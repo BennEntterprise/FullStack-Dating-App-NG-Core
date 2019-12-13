@@ -1,11 +1,12 @@
 // Node_Module Pkgs
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
+import { NgxGalleryModule } from 'ngx-gallery';
 
 // Local Components
 import { AppComponent } from './app.component';
@@ -27,6 +28,14 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 export function tokenGetter() {
    return localStorage.getItem('token');
 }
+
+// Handles known issue: https://github.com/lukasz-galka/ngx-gallery/issues/242 
+export class CustomHammerConfig extends HammerGestureConfig  { 
+   overrides = {
+       pinch: { enable: false },
+       rotate: { enable: false }
+   };
+}
 @NgModule({
    declarations: [
       AppComponent,
@@ -46,6 +55,7 @@ export function tokenGetter() {
       TabsModule.forRoot(),
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes),
+      NgxGalleryModule,
       JwtModule.forRoot({
          config: {
             tokenGetter,
@@ -59,7 +69,8 @@ export function tokenGetter() {
       ErrorInterceptorProvider,
       AlertifyService,
       MemberDetailResolver,
-      MemberListResolver
+      MemberListResolver,
+      { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig } // Handles known Issue:  https://github.com/lukasz-galka/ngx-gallery/issues/242 
    ],
    bootstrap: [
       AppComponent
