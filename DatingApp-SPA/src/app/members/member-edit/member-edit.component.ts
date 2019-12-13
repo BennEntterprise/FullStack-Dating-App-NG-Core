@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/_models/user';
 import { AlertifyService } from 'src/app/_services/alertify.service';
@@ -10,10 +10,17 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./member-edit.component.css']
 })
 export class MemberEditComponent implements OnInit {
-  @ViewChild('editForm', {static: true}) editForm: NgForm; // @Decorator('nameOnHtml', resolveQueryResultsBeforeChangeDetection) nameWeUseInThisFile: Type
+  @ViewChild('editForm', { static: true }) editForm: NgForm; // @Decorator('nameOnHtml', resolveQueryResultsBeforeChangeDetection) nameWeUseInThisFile: Type
   user: User;
 
-  constructor(private route: ActivatedRoute, private alertify : AlertifyService) { }
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.editForm.dirty) {
+      $event.returnValue = true;
+    }
+  }
+
+  constructor(private route: ActivatedRoute, private alertify: AlertifyService) { }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
@@ -21,7 +28,7 @@ export class MemberEditComponent implements OnInit {
     });
   }
 
-  updateUser(){
+  updateUser() {
     console.log(this.user)
     this.alertify.success('Profile Updated Successfully');
     this.editForm.reset(this.user); // Undoes tghe 'dirty state' and sets it to the value as saved
