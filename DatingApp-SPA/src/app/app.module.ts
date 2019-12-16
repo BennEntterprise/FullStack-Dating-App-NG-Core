@@ -7,6 +7,7 @@ import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from 'ngx-gallery';
+import { FileUploadModule } from 'ng2-file-upload';
 
 // Local Components
 import { AppComponent } from './app.component';
@@ -63,6 +64,7 @@ export class CustomHammerConfig extends HammerGestureConfig {
       BsDropdownModule.forRoot(),
       RouterModule.forRoot(appRoutes),
       NgxGalleryModule,
+      FileUploadModule,
       JwtModule.forRoot({
          config: {
             tokenGetter,
