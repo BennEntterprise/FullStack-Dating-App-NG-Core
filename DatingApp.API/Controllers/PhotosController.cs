@@ -109,26 +109,70 @@ namespace DatingApp.API.Controllers
             }
 
             var user = await _repo.GetUser(userId);
-            if(!user.Photos.Any(p => p.Id == id))
+            if (!user.Photos.Any(p => p.Id == id))
                 return Unauthorized();
-            
+
             var photofromRepo = await _repo.GetPhoto(id);
 
-            if(photofromRepo.IsMain)
+            if (photofromRepo.IsMain)
                 return BadRequest("This is already the main photo");
-            
+
             var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
 
-            currentMainPhoto.IsMain = false; 
+            currentMainPhoto.IsMain = false;
 
-            photofromRepo.IsMain = true; 
+            photofromRepo.IsMain = true;
 
-            if( await _repo.SaveAll())
-                return NoContent(); 
-            
+            if (await _repo.SaveAll())
+                return NoContent();
+
             return BadRequest("Could ot set photo to main.");
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _repo.GetUser(userId);
+            if (!user.Photos.Any(p => p.Id == id))
+                return Unauthorized();
+
+            var photofromRepo = await _repo.GetPhoto(id);
+
+            if (photofromRepo.IsMain)
+                return BadRequest("You cannot delete your main photo.");
+
+            //Cloudinary photos have a publicID
+            if (photofromRepo.PublicId != null)
+            {
+                var deleteParams = new DeletionParams(photofromRepo.PublicId);
+
+                var result = _cloudinary.Destroy(deleteParams); //Handles delete/destroy on cloudinary servers
+
+                if (result.Result == "ok")
+                {
+                    _repo.Delete(photofromRepo);
+                }
+
+            }
+
+            //Non-Cloudinary photos won't have an ID so we don't need to delete from there
+            if (photofromRepo.PublicId == null)
+            {
+                _repo.Delete(photofromRepo);
+            }
+
+            if (await _repo.SaveAll())
+            {
+                return Ok();
+            }
+
+            return BadRequest("Failed to delete teh photo");
+        }
 
     }
 }
