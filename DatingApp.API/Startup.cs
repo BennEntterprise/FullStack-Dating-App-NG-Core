@@ -56,6 +56,7 @@ namespace DatingApp.API
                         ValidateAudience = false // no need to validate localhost....
                     };
                 });
+            services.AddScoped<LogUserActivity>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. Order DOES matter
