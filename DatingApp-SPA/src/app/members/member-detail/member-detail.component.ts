@@ -3,8 +3,7 @@ import { User } from 'src/app/_models/user';
 import { UserService } from 'src/app/_services/user.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
 import { ActivatedRoute } from '@angular/router';
-import { NgxGalleryImage, NgxGalleryOptions, NgxGalleryAnimation} from 'ngx-gallery';
-
+import { NgxGalleryImage, NgxGalleryOptions, NgxGalleryAnimation } from 'ngx-gallery';
 @Component({
   selector: 'app-member-detail',
   templateUrl: './member-detail.component.html',
@@ -33,13 +32,13 @@ export class MemberDetailComponent implements OnInit {
         preview: false
       }
     ];
-  
+
     this.galleryImages = this.getImages();
 
-  } 
+  }
 
   getImages() {
-    const imageUrls = []; 
+    const imageUrls = [];
     for (const photo of this.user.photos) {
       imageUrls.push({
         small: photo.url,
