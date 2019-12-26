@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using datingapp.api.Dtos;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
@@ -19,9 +20,11 @@ namespace DatingApp.API.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IAuthRepository _repo;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
+            _mapper = mapper;
             _config = config;
             _repo = repo;
         }
@@ -49,9 +52,6 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-
-    
-
             //Make sure we have a user
             var userFromRepo = await _repo.Login(userForLoginDto.Username.ToLower(), userForLoginDto.Password);
             if (userFromRepo == null)
@@ -61,7 +61,7 @@ namespace DatingApp.API.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()), //Claim(TypeOfClaimImAsserting, ValueOfAssertion)
-                new Claim(ClaimTypes.Name, userFromRepo.Username)  // **Checkout other "ClaimTypes"! It's basically ~free~ validation code!
+                new Claim(ClaimTypes.Name, userFromRepo.Username)  // **Checkout other "ClaimTypes" Enums! It's basically ~free~ validation code!
             };
 
             // Server side signing of a token that will be given to the client
@@ -78,10 +78,14 @@ namespace DatingApp.API.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
             // Write the token into the response!
+            // And some other user data.
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user
             });
 
 
