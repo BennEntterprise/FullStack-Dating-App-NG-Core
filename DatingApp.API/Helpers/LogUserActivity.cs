@@ -11,7 +11,10 @@ namespace DatingApp.API.Helpers
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            // We await the action to get its context
             var resultContext = await next();
+
+            //Once we have the context we do some stuff
             var userId = int.Parse(resultContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var repo = resultContext.HttpContext.RequestServices.GetService<IDatingRepository>();
             var user = await repo.GetUser(userId);
