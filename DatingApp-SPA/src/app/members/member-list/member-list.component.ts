@@ -17,6 +17,7 @@ export class MemberListComponent implements OnInit {
   userParams: any = {};
   pagination: Pagination;
 
+
   constructor(private userService: UserService, private alertify: AlertifyService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -28,6 +29,7 @@ export class MemberListComponent implements OnInit {
     this.userParams.gender = this.user.gender === 'female' ? 'male' : 'female';
     this.userParams.minAge = 18;
     this.userParams.maxAge = 99;
+    this.userParams.orderBy = 'lastActive';
   }
 
   resetFilters() {
